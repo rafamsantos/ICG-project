@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crossy Road lane</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #87ceeb; /* Light blue background */
+        }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        function init() {
+            // Set up scene
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 0, 300);
+            
+            // Renderer
+            const renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0xffffff); // Set background color to white
+            renderer.shadowMap.enabled = true;
+            document.body.appendChild(renderer.domElement);
+
+            let laneWidth = 500; // Define laneWidth
+            let laneHeight = 1; // Define laneHeight
+            let laneDepth = 50; // Define laneDepth
+
+            let geometry = new THREE.BoxGeometry(laneWidth, laneHeight, laneDepth);
+            let material = new THREE.MeshBasicMaterial({color: 0x808080});
+            let lane = new THREE.Mesh(geometry, material);
+            scene.add(lane);
+            lane.position.set(0, 0, 0);
+
+            // Rotate the lane
+            let angle = Math.PI / 4; // 45 degrees, adjust as needed
+            lane.rotation.x = 45;
+            lane.rotation.y = 50;
+
+            // Create white lines
+            let lineGeometry = new THREE.BoxGeometry(20, 1, 2); // Adjust size as needed
+            let lineMaterial = new THREE.MeshBasicMaterial({color: 0xffffff});
+
+            // Number of lines and spacing between them
+            let numberOfLines = 10;
+            let lineSpacing = laneWidth / (numberOfLines + 1);
+
+            // Add lines to the scene
+            for (let i = 1; i <= numberOfLines; i++) {
+                let line = new THREE.Mesh(lineGeometry, lineMaterial);
+                line.position.set(-laneWidth / 2 + i * lineSpacing, 0.5, 0); // Adjust y position as needed
+                lane.add(line); // Add line as a child of the lane
+            }
+
+            // Animation loop
+            function animate() {
+                requestAnimationFrame(animate);
+                renderer.render(scene, camera);
+            }
+            animate();
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

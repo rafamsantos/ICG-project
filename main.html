@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<!--
+
+		threejs_ex_03_01_models.html
+
+		J. Madeira - March 2021 - Updated: April 2023
+
+-->
+
+<head>
+
+	<title>three.js example 01 &mdash; Some Models</title>
+
+	<meta charset="utf-8">
+
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+	<style>
+		body {
+
+			background-color: #ffffff;
+
+			/* To use the compconste page */
+
+			margin: 0px;
+
+			overflow: hidden;
+		}
+	</style>
+
+</head>
+
+<body>
+
+	<!-- The library --- Can be a local version -->
+
+	<script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+
+	<script type="importmap">
+		{
+    		"imports": {
+     			 "three": "https://threejs.org/build/three.module.js"
+    		}
+  		}
+	</script>
+
+	<!-- Javascript code that runs the Three.js example -->
+
+	<script type="module">
+
+		import * as THREE from 'three';
+
+		function createChicken() {
+
+			const zoom = 2;
+            const chickenSize = 50;
+            const chicken = new THREE.Group();
+            // body
+            const body = new THREE.Mesh(
+                new THREE.BoxGeometry( chickenSize*zoom, chickenSize*zoom*0.8, chickenSize*zoom*0.8 ), 
+                new THREE.MeshPhongMaterial( { color: 0xffffff} )
+            );
+            body.position.z = 10*zoom;
+            body.castShadow = true;
+            body.receiveShadow = true;
+            chicken.add(body);
+
+            const rowel = new THREE.Mesh(
+                new THREE.BoxGeometry( 2*zoom, 4*zoom, 4*zoom ), 
+                new THREE.MeshLambertMaterial( { color: 0xF0619A} )
+            );
+            rowel.position.z = 31*zoom;
+            rowel.castShadow = true;
+            rowel.receiveShadow = false;
+            chicken.add(rowel);
+
+            //eyes
+            const eyeSize = 4 * zoom;
+            const eyeMaterial = new THREE.MeshPhongMaterial({ color: 0x000000 }); // Black color for eyes
+
+            const eye1 = new THREE.Mesh(
+                new THREE.SphereGeometry(eyeSize),
+                eyeMaterial
+            );
+            eye1.position.set(-chickenSize * zoom / 4, 10, 32 * zoom);
+            chicken.add(eye1);
+
+            const eye2 = new THREE.Mesh(
+                new THREE.SphereGeometry(eyeSize),
+                eyeMaterial
+            );
+            eye2.position.set(chickenSize * zoom / 4, 10, 32 * zoom);
+            chicken.add(eye2);
+
+
+
+            //lowerPart
+            const lowerPartSize = { width: chickenSize * zoom , height: chickenSize * zoom*0.6 , depth: chickenSize * zoom*1.2};
+            const lowerPartMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff});
+
+            const lowerPart = new THREE.Mesh(
+                new THREE.BoxGeometry(lowerPartSize.width, lowerPartSize.height, lowerPartSize.depth),
+                lowerPartMaterial
+            );
+            lowerPart.position.y = -30*zoom;
+            // Add the lower part to the chicken group
+            chicken.add(lowerPart);
+
+            // legs
+            const legSize = 5;
+            const legHeight =   180;
+            const legDistance = 30;
+
+            const legMaterial = new THREE.MeshPhongMaterial( { color: 0x8B4513 } );
+
+            const leg1 = new THREE.Mesh(
+                new THREE.CylinderGeometry( legSize, legSize, legHeight, 32 ),
+                legMaterial
+            );
+            leg1.position.set(-chickenSize * zoom / 2 + legDistance, -chickenSize * zoom / 2, 10 * zoom);
+            leg1.castShadow = true;
+            leg1.receiveShadow = true;
+            chicken.add(leg1);
+
+            const leg2 = leg1.clone();
+            leg2.position.set(chickenSize * zoom / 2 - legDistance, -chickenSize * zoom / 2, 10 * zoom);
+            chicken.add(leg2);
+
+            // Adding feet
+            const footSize = 20;
+            const footMaterial = new THREE.MeshPhongMaterial( { color: 0x8B4513 } );
+
+            const foot1 = new THREE.Mesh(
+                new THREE.BoxGeometry(footSize, 5, 30),
+                footMaterial
+            );
+            foot1.position.set(-chickenSize * zoom / 2 + legDistance, -chickenSize * zoom / 2 - legHeight / 2, 15 * zoom);
+            foot1.castShadow = true;
+            foot1.receiveShadow = true;
+            chicken.add(foot1);
+
+            const foot2 = foot1.clone();
+            foot2.position.set(chickenSize * zoom / 2 - legDistance, -chickenSize * zoom / 2 - legHeight / 2, 15 * zoom);
+            chicken.add(foot2);
+
+            // add wings
+            const wingSize = { width: 10 * zoom, height: 20 * zoom, depth: 2 * zoom };
+            const wingMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff, flatShading: true });
+
+            const wing1 = new THREE.Mesh(
+                new THREE.BoxGeometry(wingSize.width, wingSize.height, wingSize.depth),
+                wingMaterial
+            );
+            wing1.rotation.x = Math.PI / 2; // Rotate by 90 degrees around the x-axis
+            // Position the wing relative to the body of the chicken
+            wing1.position.set(chickenSize * zoom / 2, -40, 10 * zoom); 
+            const wing2 = wing1.clone();
+            wing2.position.set(-chickenSize * zoom / 2, -40, 10 * zoom); // Adjust as needed
+            wing2.rotation.x = Math.PI / 2; // Rotate by 90 degrees around the x-axis
+
+            chicken.add(wing1);
+            chicken.add(wing2);
+
+			return chicken;
+		}
+
+        function createLane(){
+            const laneWidth = 500; // Define laneWidth
+            const laneHeight = 1; // Define laneHeight
+            const laneDepth = 50; // Define laneDepth
+
+            const geometry = new THREE.BoxGeometry(laneWidth, laneHeight, laneDepth);
+            const material = new THREE.MeshBasicMaterial({color: 0x808080});
+            const lane = new THREE.Mesh(geometry, material);
+            lane.position.set(0, 0, 0);
+
+            // Rotate the lane
+            const angle = Math.PI / 4; // 45 degrees, adjust as needed
+            lane.rotation.x = 45;
+            lane.rotation.y = 50;
+
+            // Create white lines
+            const lineGeometry = new THREE.BoxGeometry(20, 1, 2); // Adjust size as needed
+            const lineMaterial = new THREE.MeshBasicMaterial({color: 0xffffff});
+
+            // Number of lines and spacing between them
+            const numberOfLines = 10;
+            const lineSpacing = laneWidth / (numberOfLines + 1);
+
+            // Add lines to the scene
+            for (let i = 1; i <= numberOfLines; i++) {
+                const line = new THREE.Mesh(lineGeometry, lineMaterial);
+                line.position.set(-laneWidth / 2 + i * lineSpacing, 0.5, 0); // Adjust y position as needed
+                lane.add(line); // Add line as a child of the lane
+            }
+            return lane;
+
+        }
+
+		// Once everything is loaded, run this function
+
+		function init() {
+
+			// The SCENE
+
+			const scene = new THREE.Scene();
+
+			// Plane Helper to represent the ZOX plane
+
+			const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0));
+
+			const planeHelper = new THREE.PlaneHelper(plane, 200, 0xaaaaaa);
+
+			scene.add(planeHelper);
+
+			// The coordinate axes
+
+			const axes = new THREE.AxesHelper(15);
+
+			scene.add(axes);
+
+			// Adding models to the scene
+
+			const chicken = createChicken();
+            chicken.scale.set(0.1,0.1,0.1);
+			scene.add(chicken);
+
+            const lane = createLane();
+            lane.scale.set(0.5 ,0.5,0.5);
+            scene.add(lane);
+
+
+            
+
+
+
+			// The CAMERA --- A camera is added to the scene
+
+			// --- Where the viewer is and how he is looking at the scene
+
+			const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 400);
+
+			camera.position.y = 50;
+
+			camera.position.z = 150;
+
+			// Point the camera to the center of the scene
+
+			camera.lookAt(scene.position);
+
+			scene.add(camera)
+
+
+			const spotLight = new THREE.SpotLight( 0xffffff, 10000 );
+			spotLight.position.set( 60, 80, 40 );
+			spotLight.castShadow = true;
+
+			scene.add( spotLight );
+
+			// The RENDERER --- To display the scene on the Web page
+
+			const renderer = new THREE.WebGLRenderer({ antialias: true });
+
+			renderer.setClearColor(new THREE.Color(0xffffff));
+
+			renderer.setPixelRatio(window.devicePixelRatio);
+
+			renderer.setSize(window.innerWidth, window.innerHeight);
+
+			renderer.shadowMap.enabled=true;
+			
+
+			// Add the output of the renderer
+			document.body.appendChild(renderer.domElement);
+
+			// Render the scene
+			renderer.render(scene, camera);
+
+			var step = 0;
+			renderScene()
+			function renderScene(){
+				chicken.rotation.y += 0.01;
+
+				requestAnimationFrame(renderScene);
+				renderer.render(scene,camera);
+			}
+		}
+        // Define variables to track movement direction
+        let moveForward = false;
+        let moveBackward = false;
+        let moveLeft = false;
+        let moveRight = false;
+
+        // Define movement speed
+        const movementSpeed = 0.1;
+
+        // Event listeners for keyboard events
+        document.addEventListener('keydown', onKeyDown);
+        document.addEventListener('keyup', onKeyUp);
+
+        // Function to handle keydown event
+        function onKeyDown(event) {
+            switch (event.keyCode) {
+                case 38: // Up arrow
+                    moveForward = true;
+                    break;
+                case 40: // Down arrow
+                    moveBackward = true;
+                    break;
+                case 37: // Left arrow
+                    moveLeft = true;
+                    break;
+                case 39: // Right arrow
+                    moveRight = true;
+                    break;
+            }
+        }
+
+        // Function to handle keyup event
+        function onKeyUp(event) {
+            switch (event.keyCode) {
+                case 38: // Up arrow
+                    moveForward = false;
+                    break;
+                case 40: // Down arrow
+                    moveBackward = false;
+                    break;
+                case 37: // Left arrow
+                    moveLeft = false;
+                    break;
+                case 39: // Right arrow
+                    moveRight = false;
+                    break;
+            }
+        }
+
+        // Function to update chicken's position based on movement direction
+        function updateChickenPosition() {
+            if (moveForward) {
+                chicken.position.z -= movementSpeed;
+            }
+            if (moveBackward) {
+                chicken.position.z += movementSpeed;
+            }
+            if (moveLeft) {
+                chicken.position.x -= movementSpeed;
+            }
+            if (moveRight) {
+                chicken.position.x += movementSpeed;
+            }
+        }
+
+        // Inside your renderScene function, call updateChickenPosition before rendering the scene
+        function renderScene() {
+            updateChickenPosition();
+            // Other rendering code...
+        }
+
+
+		window.onload = init
+
+	</script>
+
+</body>
+
+</html>

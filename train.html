@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crossy Road Truck</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        function init() {
+                        
+            // Set up scene
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(20, 70, 300);
+            const renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0xffffff); // Set background color to white
+            document.body.appendChild(renderer.domElement);
+
+            // Create cabin
+            const carBodyGeometry = new THREE.BoxGeometry(80, 40, 40);
+            const carBodyMaterial = new THREE.MeshBasicMaterial({ color: 0x808080 });
+            const carBody = new THREE.Mesh(carBodyGeometry, carBodyMaterial);
+            scene.add(carBody);
+
+            // Create cabin
+            const carBodyGeometry1 = new THREE.BoxGeometry(80, 40, 40);
+            const carBodyMaterial1 = new THREE.MeshBasicMaterial({ color: 0x808080 });
+            const carBody1 = new THREE.Mesh(carBodyGeometry1, carBodyMaterial1);
+            carBody1.position.set(-100, 0, 0);
+            scene.add(carBody1);
+
+
+            // Create cabin
+            const carBodyGeometry2 = new THREE.BoxGeometry(80, 40, 40);
+            const carBodyMaterial2 = new THREE.MeshBasicMaterial({ color: 0x808080 });
+            const carBody2 = new THREE.Mesh(carBodyGeometry2, carBodyMaterial2);
+            carBody2.position.set(-204, 0, 0);
+            scene.add(carBody2);
+
+
+            // Create train driver cabin
+            const cabinGeometry = new THREE.BoxGeometry(35, 30, 40); // Customize dimensions as needed
+            const cabinMaterial = new THREE.MeshBasicMaterial({ color: 0x9DA377 });
+            const cabin = new THREE.Mesh(cabinGeometry, cabinMaterial);
+            cabin.position.set(62, 5, 0); // Position the cabin in front of the car body
+            scene.add(cabin);
+            const cabinGeometry2 = new THREE.BoxGeometry(40, 40, 10); // Customize dimensions as needed
+            const cabinMaterial2 = new THREE.MeshBasicMaterial({ color: 0x000000 });
+            const cabin2 = new THREE.Mesh(cabinGeometry2, cabinMaterial2);
+            cabin2.position.set(60, -15, 0); // Position the cabin in front of the car body
+            cabin2.rotation.x = Math.PI / 2;
+            scene.add(cabin2);
+
+            // Create wheels
+            const wheelRadius = 8;
+            const wheelHeight = 6;
+            const wheelGeometry = new THREE.CylinderGeometry(wheelRadius, wheelRadius, wheelHeight, 32);
+            const wheelMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+            
+            const wheel1 = new THREE.Mesh(wheelGeometry, wheelMaterial);
+            const wheel2 = new THREE.Mesh(wheelGeometry, wheelMaterial);
+            const wheel3 = new THREE.Mesh(wheelGeometry, wheelMaterial);
+            const wheel4 = new THREE.Mesh(wheelGeometry, wheelMaterial);
+            const wheel5 = new THREE.Mesh(wheelGeometry, wheelMaterial);
+            const wheel6 = new THREE.Mesh(wheelGeometry, wheelMaterial);
+            const wheel7 = new THREE.Mesh(wheelGeometry, wheelMaterial);
+            const wheel8 = new THREE.Mesh(wheelGeometry, wheelMaterial);
+            const wheel9 = new THREE.Mesh(wheelGeometry, wheelMaterial);
+            const wheel10 = new THREE.Mesh(wheelGeometry, wheelMaterial);
+            const wheel11 = new THREE.Mesh(wheelGeometry, wheelMaterial);
+            const wheel12 = new THREE.Mesh(wheelGeometry, wheelMaterial);
+            const wheel13 = new THREE.Mesh(wheelGeometry, wheelMaterial);
+            const wheel14 = new THREE.Mesh(wheelGeometry, wheelMaterial);
+            const wheel15 = new THREE.Mesh(wheelGeometry, wheelMaterial);
+            const wheel16 = new THREE.Mesh(wheelGeometry, wheelMaterial);
+            const wheel17 = new THREE.Mesh(wheelGeometry, wheelMaterial);
+            const wheel18 = new THREE.Mesh(wheelGeometry, wheelMaterial);
+            
+
+            // 2 pairs of wheels i the front of the truck
+            wheel1.position.set(-70, -25, 15);
+            wheel2.position.set(0, -25, -15);
+            wheel3.position.set(0, -25, 15);
+            wheel4.position.set(-130, -25, -15);
+            wheel5.position.set(-130, -25, 15);
+            wheel6.position.set(-100, -25, 15);
+            wheel7.position.set(-100, -25, -15);
+            wheel8.position.set(-70, -25, -15);
+            wheel9.position.set(30, -25, 15);
+            wheel10.position.set(-30, -25, -15);
+            wheel11.position.set( -30, -25, 15);
+            wheel12.position.set(30, -25, -15);
+            wheel13.position.set(-180, -25, 15);
+            wheel14.position.set(-180, -25, -15);
+            wheel15.position.set(-208, -25, -15);
+            wheel16.position.set(-208, -25, 15);
+            wheel17.position.set(-235, -25, -15);
+            wheel18.position.set(-235, -25, 15);            
+
+            wheel1.rotation.x = Math.PI / 2;
+            wheel2.rotation.x = Math.PI / 2;
+            wheel3.rotation.x = Math.PI / 2;
+            wheel4.rotation.x = Math.PI / 2;
+            wheel5.rotation.x = Math.PI / 2;
+            wheel6.rotation.x = Math.PI / 2;
+            wheel7.rotation.x = Math.PI / 2;
+            wheel8.rotation.x = Math.PI / 2;
+            wheel9.rotation.x = Math.PI / 2;
+            wheel10.rotation.x = Math.PI / 2;
+            wheel11.rotation.x = Math.PI / 2;
+            wheel12.rotation.x = Math.PI / 2;
+            wheel13.rotation.x = Math.PI / 2;
+            wheel14.rotation.x = Math.PI / 2;
+            wheel15.rotation.x = Math.PI / 2;
+            wheel16.rotation.x = Math.PI / 2;
+            wheel17.rotation.x = Math.PI / 2;
+            wheel18.rotation.x = Math.PI / 2;
+
+
+            scene.add(wheel1);
+            scene.add(wheel2);
+            scene.add(wheel3);
+            scene.add(wheel4);
+            scene.add(wheel5);
+            scene.add(wheel6);
+            scene.add(wheel7);
+            scene.add(wheel8);
+            scene.add(wheel9);
+            scene.add(wheel10);
+            scene.add(wheel11);
+            scene.add(wheel12);
+            scene.add(wheel13);
+            scene.add(wheel14);
+            scene.add(wheel15);
+            scene.add(wheel16);
+            scene.add(wheel17);
+            scene.add(wheel18);
+
+
+            const cabinGeometryCon1 = new THREE.BoxGeometry(40, 5, 10); // Customize dimensions as needed
+            const cabinMaterialCon1 = new THREE.MeshBasicMaterial({ color: 0x000000 });
+            const cabinCon1 = new THREE.Mesh(cabinGeometryCon1, cabinMaterialCon1);
+            cabinCon1.position.set(-55, -15, 0); // Position the cabin in front of the car body
+            cabinCon1.rotation.x = Math.PI / 2;
+            scene.add(cabinCon1);
+
+            const cabinGeometryCon2 = new THREE.BoxGeometry(40, 5, 10); // Customize dimensions as needed
+            const cabinMaterialCon2 = new THREE.MeshBasicMaterial({ color: 0x000000 });
+            const cabinCon2 = new THREE.Mesh(cabinGeometryCon2, cabinMaterialCon2);
+            cabinCon2.position.set(-150, -15, 0); // Position the cabin in front of the car body
+            cabinCon2.rotation.x = Math.PI / 2;
+            scene.add(cabinCon2);
+
+        
+
+            // front window
+            const windowGeometry = new THREE.BoxGeometry(30, 15, 2); // Customize dimensions as needed
+            const windowMaterial = new THREE.MeshBasicMaterial({ color: 0xadd8e6, transparent: true, opacity: 0.5 });
+            const frontWindow = new THREE.Mesh(windowGeometry, windowMaterial);
+            frontWindow.position.set(80, 7, 0); // Position the window on the front of the cabin
+            frontWindow.rotation.y = Math.PI / 2;
+            scene.add(frontWindow);
+
+
+            // Create axles
+            const axleGeometry = new THREE.CylinderGeometry(1, 1, 265, 30); // Adjust dimensions as needed
+            const axleMaterial = new THREE.MeshBasicMaterial({ color: 0x808080 });
+            const axle1 = new THREE.Mesh(axleGeometry, axleMaterial);
+            const axle2 = new THREE.Mesh(axleGeometry, axleMaterial);
+
+            // Position the axles
+            axle1.position.set(-103, -25, -19);
+            axle2.position.set(-103, -25, 19);
+
+            // Rotate the axles to align with wheels
+            axle1.rotation.z = Math.PI / 2;
+            axle2.rotation.z = Math.PI / 2;
+
+            // Add axles to the scene
+            scene.add(axle1);
+            scene.add(axle2);
+
+
+            
+            // Define global variables for rotation speed and axle positions
+            let rotationSpeed = 0.03;
+            let axleRadius = 30;
+            let axleAngle = 0;
+
+            animate();
+            // Inside the animate() function, update wheel and axle rotations
+            function animate() {
+                requestAnimationFrame(animate);
+
+                // Rotate the wheels
+                wheel1.rotation.y += rotationSpeed;
+                wheel2.rotation.y += rotationSpeed;
+                wheel3.rotation.y += rotationSpeed;
+                wheel4.rotation.y += rotationSpeed;
+                wheel5.rotation.y += rotationSpeed;
+                wheel6.rotation.y += rotationSpeed;
+                wheel7.rotation.y += rotationSpeed;
+                wheel8.rotation.y += rotationSpeed;
+                wheel9.rotation.y += rotationSpeed;
+                wheel10.rotation.y += rotationSpeed;
+                wheel11.rotation.y += rotationSpeed;
+                wheel12.rotation.y += rotationSpeed;
+                wheel13.rotation.y += rotationSpeed;
+                wheel14.rotation.y += rotationSpeed;
+                wheel15.rotation.y += rotationSpeed;
+                wheel16.rotation.y += rotationSpeed;
+                wheel17.rotation.y += rotationSpeed;
+                wheel18.rotation.y += rotationSpeed;
+
+                // make axles rotate with the wheels
+
+                renderer.render(scene, camera);
+            }
+
+
+        }
+        window.onload = init;
+    </script>
+</body>
+</html>

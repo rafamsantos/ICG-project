@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crossy Road Tree</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #87ceeb; /* Light blue background */
+        }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        function init() {
+            // Set up scene
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 50, 200);
+            
+            // Renderer
+            const renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0xffffff); // Set background color to white
+            renderer.shadowMap.enabled = true;
+            document.body.appendChild(renderer.domElement);
+
+            // Lights
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+            directionalLight.position.set(0, 1, 0);
+            directionalLight.castShadow = true;
+            scene.add(directionalLight);
+
+            // Spotlight
+            const spotlight = new THREE.SpotLight(0xffffff, 1);
+            spotlight.castShadow = true;
+            spotlight.position.set(0, 100, 0); // Initial position
+            scene.add(spotlight);
+
+            // Materials
+            const trunkMaterial = new THREE.MeshStandardMaterial({ color: 0xb5651d }); // Brown color for the trunk
+            const branchMaterial = new THREE.MeshStandardMaterial({ color: 0xb5651d }); // Brown color for the branches
+            const foliageMaterial = new THREE.MeshStandardMaterial({ color: 0x00aa00 }); // Green color for the foliage (cone)
+
+            // Trunk
+            const trunkRadius = 5;
+            const trunkHeight = 35;
+            const trunkGeometry = new THREE.CylinderGeometry(trunkRadius, trunkRadius, trunkHeight, 32);
+            const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
+            trunk.position.y = trunkHeight / 2.0;
+            trunk.castShadow = true;
+            trunk.receiveShadow = true;
+            scene.add(trunk);
+
+            // Branch
+            const branchLength = 10;
+            const branchRadius = 1;
+            const branchGeometry = new THREE.CylinderGeometry(branchRadius, branchRadius, branchLength, 32);
+            const branch1 = new THREE.Mesh(branchGeometry, branchMaterial);
+            branch1.position.set(0, trunkHeight - branchLength / 2, 0);
+            branch1.castShadow = true;
+            branch1.receiveShadow = true;
+            scene.add(branch1);
+
+            // cone branches
+            // Set branch inclination
+            const inclinationAngle = Math.PI / 8; 
+            branch1.rotation.z = inclinationAngle;
+            branch1.position.y = 60
+            branch1.position.x = 0
+            branch1.position.z = 6
+
+            const branch2 = new THREE.Mesh(branchGeometry, branchMaterial);
+            branch2.position.set(0, trunkHeight - branchLength / 2, 0);
+            branch2.castShadow = true;
+            branch2.receiveShadow = true;
+            scene.add(branch2);
+
+            // Set branch inclination
+            const inclinationAngle2 = Math.PI / 4; 
+            branch2.rotation.z = inclinationAngle2;
+            branch2.position.y =45
+            branch2.position.x = -5
+            branch2.position.z =14
+
+            const branch3 = new THREE.Mesh(branchGeometry, branchMaterial);
+            branch3.position.set(0, trunkHeight - branchLength / 2, 0);
+            branch3.castShadow = true;
+            branch3.receiveShadow = true;
+            scene.add(branch3);
+
+            // Set branch inclination
+            const inclinationAngle3 = Math.PI/1.5;
+            branch3.rotation.z = inclinationAngle3;
+            branch3.position.y =45
+            branch3.position.x = 10
+            branch3.position.z =10
+
+            //trunk branches
+            const branch4 = new THREE.Mesh(branchGeometry, branchMaterial);
+            branch4.position.set(0, trunkHeight - branchLength / 2, 0);
+            branch4.castShadow = true;
+            branch4.receiveShadow = true;
+            scene.add(branch4);
+
+            // Set branch inclination
+            const inclinationAngle4 = Math.PI/2; 
+            branch4.rotation.z = inclinationAngle4;
+            branch4.position.y = 20
+            branch4.position.x = 6
+            branch4.position.z =10
+
+
+
+            const branch5 = new THREE.Mesh(branchGeometry, branchMaterial);
+            branch5.position.set(0, trunkHeight - branchLength / 2, 0);
+            branch5.castShadow = true;
+            branch5.receiveShadow = true;
+            scene.add(branch5);
+
+            // Set branch inclination
+            const inclinationAngle5 = Math.PI/4; // 30 degrees
+            branch5.rotation.z = inclinationAngle5;
+            branch5.position.y = 15
+            branch5.position.x = -7
+            branch5.position.z =10
+
+            // Foliage (Cone)
+            const coneRadius = 20;
+            const coneHeight = 40;
+            const coneGeometry = new THREE.ConeGeometry(coneRadius, coneHeight, 32);
+            const cone = new THREE.Mesh(coneGeometry, foliageMaterial);
+            cone.position.y = trunkHeight + coneHeight / 2.0;
+            cone.castShadow = true;
+            cone.receiveShadow = true;
+            scene.add(cone);
+
+            // Animation variables
+            let angle = 0;
+
+            // Render loop
+            function animate() {
+                requestAnimationFrame(animate);
+
+                // Rotate the tree slowly
+                trunk.rotation.y += 0.005;
+
+                // Move spotlight in a circular motion around the tree
+                const radius = 50;
+                const speed = 0.01;
+                spotlight.position.x = Math.sin(angle) * radius;
+                spotlight.position.z = Math.cos(angle) * radius;
+                angle += speed;
+
+                renderer.render(scene, camera);
+            }
+
+            animate();
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

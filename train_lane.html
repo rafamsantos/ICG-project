@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crossy Road Train Track</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #87ceeb; /* Light blue background */
+        }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        function init() {
+            // Set up scene
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 0, 300);
+            
+            // Renderer
+            const renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0xffffff); // Set background color to white
+            renderer.shadowMap.enabled = true;
+            document.body.appendChild(renderer.domElement);
+
+            let trackWidth = 500; // Define trackWidth
+            let trackHeight = 1; // Define trackHeight
+            let trackDepth = 50; // Define trackDepth
+
+            let geometry = new THREE.BoxGeometry(trackWidth, trackHeight, trackDepth);
+            let material = new THREE.MeshBasicMaterial({color: 0x6e6e6e}); // Dark gray for the track
+            let track = new THREE.Mesh(geometry, material);
+            scene.add(track);
+            track.position.set(0, 0, 0);
+
+            // Rotate the track
+            track.rotation.x = Math.PI / 2; // Rotate 90 degrees around x-axis to make it flat
+
+            // Create wooden planks for the track
+            let plankGeometry = new THREE.BoxGeometry(10, 1, trackDepth); // Adjust size as needed
+            let plankMaterial = new THREE.MeshBasicMaterial({color: 0x8b4513}); // Saddle brown for wooden planks
+
+            // Number of planks and spacing between them
+            let numberOfPlanks = 15;
+            let plankSpacing = trackWidth / (numberOfPlanks + 1);
+
+            // Add planks to the scene
+            for (let i = 1; i <= numberOfPlanks; i++) {
+                let plank = new THREE.Mesh(plankGeometry, plankMaterial);
+                plank.position.set(-trackWidth / 2 + i * plankSpacing, 0.5, 0); // Adjust y position as needed
+                track.add(plank); // Add plank as a child of the track
+            }
+
+            track.rotation.x = 45;
+            track.rotation.y = 50;
+
+            // Animation loop
+            function animate() {
+                requestAnimationFrame(animate);
+                renderer.render(scene, camera);
+            }
+            animate();
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

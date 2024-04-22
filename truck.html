@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crossy Road Truck</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        function init() {
+                        
+            // Set up scene
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 50, 200);
+            const renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0xffffff); // Set background color to white
+            document.body.appendChild(renderer.domElement);
+
+            // Create car body
+            const carBodyGeometry = new THREE.BoxGeometry(80, 40, 40);
+            const carBodyMaterial = new THREE.MeshBasicMaterial({ color: 0x808080 });
+            const carBody = new THREE.Mesh(carBodyGeometry, carBodyMaterial);
+            scene.add(carBody);
+
+            // Create truck cabin
+            const cabinGeometry = new THREE.BoxGeometry(35, 30, 40); // Customize dimensions as needed
+            const cabinMaterial = new THREE.MeshBasicMaterial({ color: 0x8b0000 });
+            const cabin = new THREE.Mesh(cabinGeometry, cabinMaterial);
+            cabin.position.set(62, 5, 0); // Position the cabin in front of the car body
+            scene.add(cabin);
+            const cabinGeometry2 = new THREE.BoxGeometry(40, 40, 10); // Customize dimensions as needed
+            const cabinMaterial2 = new THREE.MeshBasicMaterial({ color: 0x000000 });
+            const cabin2 = new THREE.Mesh(cabinGeometry2, cabinMaterial2);
+            cabin2.position.set(60, -15, 0); // Position the cabin in front of the car body
+            cabin2.rotation.x = Math.PI / 2;
+            scene.add(cabin2);
+
+            // Create wheels
+            const wheelRadius = 8;
+            const wheelHeight = 6;
+            const wheelGeometry = new THREE.CylinderGeometry(wheelRadius, wheelRadius, wheelHeight, 32);
+            const wheelMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+            const frontLeftWheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
+            const frontRightWheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
+            const rearLeftWheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
+            const rearRightWheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
+
+            const cabinWheelsRightBack = new THREE.Mesh(wheelGeometry, wheelMaterial);
+            const cabinWheelsLeftBack = new THREE.Mesh(wheelGeometry, wheelMaterial);
+
+            const cabinWheelsRightFront = new THREE.Mesh(wheelGeometry, wheelMaterial);
+            const cabinWheelsLeftFront = new THREE.Mesh(wheelGeometry, wheelMaterial);
+            
+
+            // 2 pairs of wheels i the front of the truck
+            cabinWheelsRightBack.position.set(20, -20, 15);
+            cabinWheelsLeftBack.position.set(20, -20, -15);
+
+            cabinWheelsRightFront.position.set(50, -20, 15);
+            cabinWheelsLeftFront.position.set(50, -20, -15);
+
+
+            // 2 pairs of wheels in the back of the truck
+            frontLeftWheel.position.set(-30, -20, 15);
+            frontRightWheel.position.set(-16, -20, 15);
+            rearLeftWheel.position.set(-30, -20, -15);
+            rearRightWheel.position.set(-16, -20, -15);
+
+            frontLeftWheel.rotation.x = Math.PI / 2;
+            frontRightWheel.rotation.x = Math.PI / 2;
+            rearLeftWheel.rotation.x = Math.PI / 2;
+            rearRightWheel.rotation.x = Math.PI / 2;
+
+            cabinWheelsRightBack.rotation.x = Math.PI / 2;
+            cabinWheelsLeftBack.rotation.x = Math.PI / 2;
+
+            cabinWheelsRightFront.rotation.x = Math.PI / 2;
+            cabinWheelsLeftFront.rotation.x = Math.PI / 2;
+
+            scene.add(frontLeftWheel);
+            scene.add(frontRightWheel);
+            scene.add(rearLeftWheel);
+            scene.add(rearRightWheel);
+            scene.add(cabinWheelsRightBack);
+            scene.add(cabinWheelsLeftBack);
+            scene.add(cabinWheelsRightFront);
+            scene.add(cabinWheelsLeftFront);
+
+
+            //front lights
+            const lightGeometry = new THREE.SphereGeometry(3, 32, 32);
+            const lightMaterial = new THREE.MeshBasicMaterial({ color: 0xfffffff });
+            const leftLight = new THREE.Mesh(lightGeometry, lightMaterial);
+            const rightLight = new THREE.Mesh(lightGeometry, lightMaterial);
+            leftLight.position.set(80, -15, 12);
+            rightLight.position.set(80, -15, -12);
+            scene.add(leftLight);
+            scene.add(rightLight);
+
+            // front window
+            const windowGeometry = new THREE.BoxGeometry(30, 15, 2); // Customize dimensions as needed
+            const windowMaterial = new THREE.MeshBasicMaterial({ color: 0xadd8e6, transparent: true, opacity: 0.5 });
+            const frontWindow = new THREE.Mesh(windowGeometry, windowMaterial);
+            frontWindow.position.set(80, 7, 0); // Position the window on the front of the cabin
+            frontWindow.rotation.y = Math.PI / 2;
+            scene.add(frontWindow);
+
+            // Create door right
+            const doorRightGeometry = new THREE.BoxGeometry(1, 20, 10); // Customize dimensions as needed
+            const doorRightMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+            const doorRight = new THREE.Mesh(doorRightGeometry, doorRightMaterial);
+            doorRight.position.set(65, 5, 20); // Position the door on the side of the cabin
+            doorRight.rotation.y = Math.PI / 2;
+            scene.add(doorRight);
+
+            const doorLeftGeometry = new THREE.BoxGeometry(1, 20, 10); // Customize dimensions as needed
+            const doorLeftMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+            const doorLeft = new THREE.Mesh(doorRightGeometry, doorRightMaterial);
+            doorLeft.position.set(65, 5, -20); // Position the door on the side of the cabin
+            doorLeft.rotation.y = Math.PI / 2;
+            scene.add(doorLeft);
+
+            // create windshield
+            const wiperArmGeometry1 = new THREE.BoxGeometry(1, 0.5, 10); // Customize dimensions as needed
+            const wiperArmMaterial1 = new THREE.MeshBasicMaterial({ color: 0x000000 });
+            const wiperArm1 = new THREE.Mesh(wiperArmGeometry1, wiperArmMaterial1);
+            wiperArm1.position.set(80, 0, 7); // Position the wiper arm on the windshield
+            scene.add(wiperArm1);
+
+            const wiperArmGeometry2 = new THREE.BoxGeometry(1, 0.5, 10); // Customize dimensions as needed
+            const wiperArmMaterial2 = new THREE.MeshBasicMaterial({ color: 0x000000 });
+            const wiperArm2 = new THREE.Mesh(wiperArmGeometry2, wiperArmMaterial2);
+            wiperArm2.position.set(80, 0, -4); // Position the wiper arm on the windshield
+            scene.add(wiperArm2);
+
+            // Create windshield wiper blade
+            const wiperBladeGeometry1 = new THREE.BoxGeometry(1, 10, 0.5); // Customize dimensions as needed
+            const wiperBladeMaterial1 = new THREE.MeshBasicMaterial({ color: 0x000000 });
+            const wiperBlade1 = new THREE.Mesh(wiperBladeGeometry1, wiperBladeMaterial1);
+            wiperBlade1.position.set(80,4, 5); // Position the wiper blade on the windshield
+            wiperBlade1.rotation.x = Math.PI / -4;
+
+            scene.add(wiperBlade1);
+
+
+            const wiperBladeGeometry2 = new THREE.BoxGeometry(1, 10, 0.5); // Customize dimensions as needed
+            const wiperBladeMaterial2 = new THREE.MeshBasicMaterial({ color: 0x000000 });
+            const wiperBlade2 = new THREE.Mesh(wiperBladeGeometry2, wiperBladeMaterial2);
+            wiperBlade2.position.set(80,4, -6); // Position the wiper blade on the windshield
+            wiperBlade2.rotation.x = Math.PI / -4;
+
+            scene.add(wiperBlade2);
+
+
+            // Render loop
+            function animate() {
+                requestAnimationFrame(animate);
+
+                scene.rotation.y += 0.03;
+
+                renderer.render(scene, camera);
+            }
+
+            animate();
+
+        }
+        window.onload = init;
+    </script>
+</body>
+</html>

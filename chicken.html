@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crossy Road Chicken</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        function init() {
+            const scene = new THREE.Scene();
+            const distance = 500;
+            const camera = new THREE.OrthographicCamera( window.innerWidth/-2, window.innerWidth/2, window.innerHeight / 2, window.innerHeight / -2, 0.1, 10000 );
+
+            camera.rotation.x = 50*Math.PI;
+            camera.rotation.y = 20*Math.PI;
+            camera.rotation.z = 10*Math.PI;
+
+            const initialCameraPositionY = -Math.tan(camera.rotation.x)*distance;
+            const initialCameraPositionX = Math.tan(camera.rotation.y)*Math.sqrt(distance**2 + initialCameraPositionY**2);
+            camera.position.y = initialCameraPositionY;
+            camera.position.x = initialCameraPositionX;
+            camera.position.z = distance;
+
+            const zoom = 2;
+            const chickenSize = 50;
+            const chicken = new THREE.Group();
+            // body
+            const body = new THREE.Mesh(
+                new THREE.BoxBufferGeometry( chickenSize*zoom, chickenSize*zoom*0.8, chickenSize*zoom*0.8 ), 
+                new THREE.MeshPhongMaterial( { color: 0xffffff} )
+            );
+            body.position.z = 10*zoom;
+            body.castShadow = true;
+            body.receiveShadow = true;
+            chicken.add(body);
+
+            const rowel = new THREE.Mesh(
+                new THREE.BoxBufferGeometry( 2*zoom, 4*zoom, 4*zoom ), 
+                new THREE.MeshLambertMaterial( { color: 0xF0619A} )
+            );
+            rowel.position.z = 31*zoom;
+            rowel.castShadow = true;
+            rowel.receiveShadow = false;
+            chicken.add(rowel);
+
+            //eyes
+            const eyeSize = 4 * zoom;
+            const eyeMaterial = new THREE.MeshPhongMaterial({ color: 0x000000 }); // Black color for eyes
+
+            const eye1 = new THREE.Mesh(
+                new THREE.SphereBufferGeometry(eyeSize),
+                eyeMaterial
+            );
+            eye1.position.set(-chickenSize * zoom / 4, 10, 32 * zoom);
+            chicken.add(eye1);
+
+            const eye2 = new THREE.Mesh(
+                new THREE.SphereBufferGeometry(eyeSize),
+                eyeMaterial
+            );
+            eye2.position.set(chickenSize * zoom / 4, 10, 32 * zoom);
+            chicken.add(eye2);
+
+
+
+            //lowerPart
+            const lowerPartSize = { width: chickenSize * zoom , height: chickenSize * zoom*0.6 , depth: chickenSize * zoom*1.2};
+            const lowerPartMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff});
+
+            const lowerPart = new THREE.Mesh(
+                new THREE.BoxBufferGeometry(lowerPartSize.width, lowerPartSize.height, lowerPartSize.depth),
+                lowerPartMaterial
+            );
+            lowerPart.position.y = -30*zoom;
+            // Add the lower part to the chicken group
+            chicken.add(lowerPart);
+
+            // legs
+            const legSize = 5;
+            const legHeight =   180;
+            const legDistance = 30;
+
+            const legMaterial = new THREE.MeshPhongMaterial( { color: 0x8B4513 } );
+
+            const leg1 = new THREE.Mesh(
+                new THREE.CylinderBufferGeometry( legSize, legSize, legHeight, 32 ),
+                legMaterial
+            );
+            leg1.position.set(-chickenSize * zoom / 2 + legDistance, -chickenSize * zoom / 2, 10 * zoom);
+            leg1.castShadow = true;
+            leg1.receiveShadow = true;
+            chicken.add(leg1);
+
+            const leg2 = leg1.clone();
+            leg2.position.set(chickenSize * zoom / 2 - legDistance, -chickenSize * zoom / 2, 10 * zoom);
+            chicken.add(leg2);
+
+            // Adding feet
+            const footSize = 20;
+            const footMaterial = new THREE.MeshPhongMaterial( { color: 0x8B4513 } );
+
+            const foot1 = new THREE.Mesh(
+                new THREE.BoxGeometry(footSize, 5, 30),
+                footMaterial
+            );
+            foot1.position.set(-chickenSize * zoom / 2 + legDistance, -chickenSize * zoom / 2 - legHeight / 2, 15 * zoom);
+            foot1.castShadow = true;
+            foot1.receiveShadow = true;
+            chicken.add(foot1);
+
+            const foot2 = foot1.clone();
+            foot2.position.set(chickenSize * zoom / 2 - legDistance, -chickenSize * zoom / 2 - legHeight / 2, 15 * zoom);
+            chicken.add(foot2);
+
+            scene.add(chicken);
+
+
+            // add wings
+            const wingSize = { width: 10 * zoom, height: 20 * zoom, depth: 2 * zoom };
+            const wingMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff, flatShading: true });
+
+            const wing1 = new THREE.Mesh(
+                new THREE.BoxBufferGeometry(wingSize.width, wingSize.height, wingSize.depth),
+                wingMaterial
+            );
+            wing1.rotation.x = Math.PI / 2; // Rotate by 90 degrees around the x-axis
+            // Position the wing relative to the body of the chicken
+            wing1.position.set(chickenSize * zoom / 2, -40, 10 * zoom); 
+            const wing2 = wing1.clone();
+            wing2.position.set(-chickenSize * zoom / 2, -40, 10 * zoom); // Adjust as needed
+            wing2.rotation.x = Math.PI / 2; // Rotate by 90 degrees around the x-axis
+
+            chicken.add(wing1);
+            chicken.add(wing2);
+
+            const mixer = new THREE.AnimationMixer(wing1);
+            const mixer2 = new THREE.AnimationMixer(wing2);
+
+
+            // Define keyframes for the wing animation
+            const keyframes = [
+                { time: 0, value: 0 }, // Initial position
+                { time: 0.25, value: Math.PI / 6 }, // Flap up
+                { time: 0.25, value: 0 } // Return to initial position
+            ];
+
+            const track = new THREE.NumberKeyframeTrack('.rotation[x]', keyframes.map(kf => kf.time), keyframes.map(kf => kf.value));
+            const clip = new THREE.AnimationClip('flap', -1, [track]);
+
+            // Create an animation action
+            const action = mixer.clipAction(clip);
+            const action2 =mixer2.clipAction(clip);
+            action.loop = THREE.LoopPingPong; // Make the animation loop back and forth
+            action2.loop = THREE.LoopPingPong;
+
+            // Start the animation
+            action.play();
+            action2.play();
+
+            // Create a directional light
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(0, 0, 1); // From top left
+            scene.add(directionalLight);
+
+            // Renderer
+            const renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            // Function to animate the scene
+            function animate() {
+                requestAnimationFrame(animate);
+                chicken.rotation.y += 0.01; // Rotate the chicken
+                mixer.update(0.01); // Update the animation mixer
+                mixer2.update(0.01); // Update the animation mixer
+
+                renderer.render(scene, camera);
+            }
+            // Call the animate function
+            animate();
+        }
+        window.onload = init;
+    </script>
+</body>
+</html>
