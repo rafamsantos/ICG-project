@@ -53,316 +53,927 @@
 
 		import * as THREE from 'three';
 
-		function createChicken() {
-
-			const zoom = 2;
-            const chickenSize = 50;
-            const chicken = new THREE.Group();
-            // body
-            const body = new THREE.Mesh(
-                new THREE.BoxGeometry( chickenSize*zoom, chickenSize*zoom*0.8, chickenSize*zoom*0.8 ), 
-                new THREE.MeshPhongMaterial( { color: 0xffffff} )
-            );
-            body.position.z = 10*zoom;
-            body.castShadow = true;
-            body.receiveShadow = true;
-            chicken.add(body);
-
-            const rowel = new THREE.Mesh(
-                new THREE.BoxGeometry( 2*zoom, 4*zoom, 4*zoom ), 
-                new THREE.MeshLambertMaterial( { color: 0xF0619A} )
-            );
-            rowel.position.z = 31*zoom;
-            rowel.castShadow = true;
-            rowel.receiveShadow = false;
-            chicken.add(rowel);
-
-            //eyes
-            const eyeSize = 4 * zoom;
-            const eyeMaterial = new THREE.MeshPhongMaterial({ color: 0x000000 }); // Black color for eyes
-
-            const eye1 = new THREE.Mesh(
-                new THREE.SphereGeometry(eyeSize),
-                eyeMaterial
-            );
-            eye1.position.set(-chickenSize * zoom / 4, 10, 32 * zoom);
-            chicken.add(eye1);
-
-            const eye2 = new THREE.Mesh(
-                new THREE.SphereGeometry(eyeSize),
-                eyeMaterial
-            );
-            eye2.position.set(chickenSize * zoom / 4, 10, 32 * zoom);
-            chicken.add(eye2);
-
-
-
-            //lowerPart
-            const lowerPartSize = { width: chickenSize * zoom , height: chickenSize * zoom*0.6 , depth: chickenSize * zoom*1.2};
-            const lowerPartMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff});
-
-            const lowerPart = new THREE.Mesh(
-                new THREE.BoxGeometry(lowerPartSize.width, lowerPartSize.height, lowerPartSize.depth),
-                lowerPartMaterial
-            );
-            lowerPart.position.y = -30*zoom;
-            // Add the lower part to the chicken group
-            chicken.add(lowerPart);
-
-            // legs
-            const legSize = 5;
-            const legHeight =   180;
-            const legDistance = 30;
-
-            const legMaterial = new THREE.MeshPhongMaterial( { color: 0x8B4513 } );
-
-            const leg1 = new THREE.Mesh(
-                new THREE.CylinderGeometry( legSize, legSize, legHeight, 32 ),
-                legMaterial
-            );
-            leg1.position.set(-chickenSize * zoom / 2 + legDistance, -chickenSize * zoom / 2, 10 * zoom);
-            leg1.castShadow = true;
-            leg1.receiveShadow = true;
-            chicken.add(leg1);
-
-            const leg2 = leg1.clone();
-            leg2.position.set(chickenSize * zoom / 2 - legDistance, -chickenSize * zoom / 2, 10 * zoom);
-            chicken.add(leg2);
-
-            // Adding feet
-            const footSize = 20;
-            const footMaterial = new THREE.MeshPhongMaterial( { color: 0x8B4513 } );
-
-            const foot1 = new THREE.Mesh(
-                new THREE.BoxGeometry(footSize, 5, 30),
-                footMaterial
-            );
-            foot1.position.set(-chickenSize * zoom / 2 + legDistance, -chickenSize * zoom / 2 - legHeight / 2, 15 * zoom);
-            foot1.castShadow = true;
-            foot1.receiveShadow = true;
-            chicken.add(foot1);
-
-            const foot2 = foot1.clone();
-            foot2.position.set(chickenSize * zoom / 2 - legDistance, -chickenSize * zoom / 2 - legHeight / 2, 15 * zoom);
-            chicken.add(foot2);
-
-            // add wings
-            const wingSize = { width: 10 * zoom, height: 20 * zoom, depth: 2 * zoom };
-            const wingMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff, flatShading: true });
-
-            const wing1 = new THREE.Mesh(
-                new THREE.BoxGeometry(wingSize.width, wingSize.height, wingSize.depth),
-                wingMaterial
-            );
-            wing1.rotation.x = Math.PI / 2; // Rotate by 90 degrees around the x-axis
-            // Position the wing relative to the body of the chicken
-            wing1.position.set(chickenSize * zoom / 2, -40, 10 * zoom); 
-            const wing2 = wing1.clone();
-            wing2.position.set(-chickenSize * zoom / 2, -40, 10 * zoom); // Adjust as needed
-            wing2.rotation.x = Math.PI / 2; // Rotate by 90 degrees around the x-axis
-
-            chicken.add(wing1);
-            chicken.add(wing2);
-
-			return chicken;
-		}
-
-        function createLane(){
-            const laneWidth = 500; // Define laneWidth
-            const laneHeight = 1; // Define laneHeight
-            const laneDepth = 50; // Define laneDepth
-
-            const geometry = new THREE.BoxGeometry(laneWidth, laneHeight, laneDepth);
-            const material = new THREE.MeshBasicMaterial({color: 0x808080});
-            const lane = new THREE.Mesh(geometry, material);
-            lane.position.set(0, 0, 0);
-
-            // Rotate the lane
-            const angle = Math.PI / 4; // 45 degrees, adjust as needed
-            lane.rotation.x = 45;
-            lane.rotation.y = 50;
-
-            // Create white lines
-            const lineGeometry = new THREE.BoxGeometry(20, 1, 2); // Adjust size as needed
-            const lineMaterial = new THREE.MeshBasicMaterial({color: 0xffffff});
-
-            // Number of lines and spacing between them
-            const numberOfLines = 10;
-            const lineSpacing = laneWidth / (numberOfLines + 1);
-
-            // Add lines to the scene
-            for (let i = 1; i <= numberOfLines; i++) {
-                const line = new THREE.Mesh(lineGeometry, lineMaterial);
-                line.position.set(-laneWidth / 2 + i * lineSpacing, 0.5, 0); // Adjust y position as needed
-                lane.add(line); // Add line as a child of the lane
-            }
-            return lane;
-
-        }
-
 		// Once everything is loaded, run this function
 
 		function init() {
 
-			// The SCENE
+			const counterDOM = document.getElementById('counter');  
+            const endDOM = document.getElementById('end');  
 
-			const scene = new THREE.Scene();
+            const scene = new THREE.Scene();
 
-			// Plane Helper to represent the ZOX plane
+            const distance = 500;
+            const camera = new THREE.OrthographicCamera( window.innerWidth/-2, window.innerWidth/2, window.innerHeight / 2, window.innerHeight / -2, 0.1, 10000 );
 
-			const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0));
+            camera.rotation.x = 50*Math.PI/180;
+            camera.rotation.y = 20*Math.PI/180;
+            camera.rotation.z = 10*Math.PI/180;
 
-			const planeHelper = new THREE.PlaneHelper(plane, 200, 0xaaaaaa);
+            const initialCameraPositionY = -Math.tan(camera.rotation.x)*distance;
+            const initialCameraPositionX = Math.tan(camera.rotation.y)*Math.sqrt(distance**2 + initialCameraPositionY**2);
+            camera.position.y = initialCameraPositionY;
+            camera.position.x = initialCameraPositionX;
+            camera.position.z = distance;
 
-			scene.add(planeHelper);
+            const zoom = 2;
 
-			// The coordinate axes
+            const chickenSize = 15;
 
-			const axes = new THREE.AxesHelper(15);
+            const positionWidth = 42;
+            const columns = 17;
+            const boardWidth = positionWidth*columns;
 
-			scene.add(axes);
+            const stepTime = 200; // Miliseconds it takes for the chicken to take a step forward, backward, left or right
 
-			// Adding models to the scene
+            let lanes;
+            let currentLane;
+            let currentColumn;
 
-			const chicken = createChicken();
-            chicken.scale.set(0.1,0.1,0.1);
-			scene.add(chicken);
+            let previousTimestamp;
+            let startMoving;
+            let moves;
+            let stepStartTimestamp;
 
-            const lane = createLane();
-            lane.scale.set(0.5 ,0.5,0.5);
-            scene.add(lane);
+            const carFrontTexture = new Texture(40,80,[{x: 0, y: 10, w: 30, h: 60 }]);
+            const carBackTexture = new Texture(40,80,[{x: 10, y: 10, w: 30, h: 60 }]);
+            const carRightSideTexture = new Texture(110,40,[{x: 10, y: 0, w: 50, h: 30 }, {x: 70, y: 0, w: 30, h: 30 }]);
+            const carLeftSideTexture = new Texture(110,40,[{x: 10, y: 10, w: 50, h: 30 }, {x: 70, y: 10, w: 30, h: 30 }]);
 
+            const truckFrontTexture = new Texture(30,30,[{x: 15, y: 0, w: 10, h: 30 }]);
+            const truckRightSideTexture = new Texture(25,30,[{x: 0, y: 15, w: 10, h: 10 }]);
+            const truckLeftSideTexture = new Texture(25,30,[{x: 0, y: 5, w: 10, h: 10 }]);
 
-            
+            const generateLanes = () => [-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9].map((index) => {
+                const lane = new Lane(index);
+                lane.mesh.position.y = index*positionWidth*zoom;
+                scene.add( lane.mesh );
+                return lane;
+            }).filter((lane) => lane.index >= 0);
 
-
-
-			// The CAMERA --- A camera is added to the scene
-
-			// --- Where the viewer is and how he is looking at the scene
-
-			const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 400);
-
-			camera.position.y = 50;
-
-			camera.position.z = 150;
-
-			// Point the camera to the center of the scene
-
-			camera.lookAt(scene.position);
-
-			scene.add(camera)
-
-
-			const spotLight = new THREE.SpotLight( 0xffffff, 10000 );
-			spotLight.position.set( 60, 80, 40 );
-			spotLight.castShadow = true;
-
-			scene.add( spotLight );
-
-			// The RENDERER --- To display the scene on the Web page
-
-			const renderer = new THREE.WebGLRenderer({ antialias: true });
-
-			renderer.setClearColor(new THREE.Color(0xffffff));
-
-			renderer.setPixelRatio(window.devicePixelRatio);
-
-			renderer.setSize(window.innerWidth, window.innerHeight);
-
-			renderer.shadowMap.enabled=true;
-			
-
-			// Add the output of the renderer
-			document.body.appendChild(renderer.domElement);
-
-			// Render the scene
-			renderer.render(scene, camera);
-
-			var step = 0;
-			renderScene()
-			function renderScene(){
-				chicken.rotation.y += 0.01;
-
-				requestAnimationFrame(renderScene);
-				renderer.render(scene,camera);
-			}
-		}
-        // Define variables to track movement direction
-        let moveForward = false;
-        let moveBackward = false;
-        let moveLeft = false;
-        let moveRight = false;
-
-        // Define movement speed
-        const movementSpeed = 0.1;
-
-        // Event listeners for keyboard events
-        document.addEventListener('keydown', onKeyDown);
-        document.addEventListener('keyup', onKeyUp);
-
-        // Function to handle keydown event
-        function onKeyDown(event) {
-            switch (event.keyCode) {
-                case 38: // Up arrow
-                    moveForward = true;
-                    break;
-                case 40: // Down arrow
-                    moveBackward = true;
-                    break;
-                case 37: // Left arrow
-                    moveLeft = true;
-                    break;
-                case 39: // Right arrow
-                    moveRight = true;
-                    break;
+            const addLane = () => {
+                const index = lanes.length;
+                const lane = new Lane(index);
+                lane.mesh.position.y = index*positionWidth*zoom;
+                scene.add(lane.mesh);
+                lanes.push(lane);
             }
+
+            const chicken = new Chicken();
+            scene.add( chicken );
+
+            const hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.6);
+            scene.add(hemiLight)
+
+            const initialDirLightPositionX = -100;
+            const initialDirLightPositionY = -100;
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
+            dirLight.position.set(initialDirLightPositionX, initialDirLightPositionY, 200);
+            dirLight.castShadow = true;
+            dirLight.target = chicken;
+            scene.add(dirLight);
+
+            dirLight.shadow.mapSize.width = 2048;
+            dirLight.shadow.mapSize.height = 2048;
+            var d = 500;
+            dirLight.shadow.camera.left = - d;
+            dirLight.shadow.camera.right = d;
+            dirLight.shadow.camera.top = d;
+            dirLight.shadow.camera.bottom = - d;
+
+            // var helper = new THREE.CameraHelper( dirLight.shadow.camera );
+            // var helper = new THREE.CameraHelper( camera );
+            // scene.add(helper)
+
+            const backLight = new THREE.DirectionalLight(0x000000, .4);
+            backLight.position.set(200, 200, 50);
+            backLight.castShadow = true;
+            scene.add(backLight)
+
+            const laneTypes = ['car', 'truck', 'forest'];
+            const laneSpeeds = [2, 2.5, 3];
+            const vechicleColors = [0xa52523, 0xbdb638, 0x78b14b];
+            const threeHeights = [20,45,60];
+
+            const initaliseValues = () => {
+            lanes = generateLanes()
+
+            currentLane = 0;
+            currentColumn = Math.floor(columns/2);
+
+            previousTimestamp = null;
+
+            startMoving = false;
+            moves = [];
+            stepStartTimestamp;
+
+            chicken.position.x = 0;
+            chicken.position.y = 0;
+
+            camera.position.y = initialCameraPositionY;
+            camera.position.x = initialCameraPositionX;
+
+            dirLight.position.x = initialDirLightPositionX;
+            dirLight.position.y = initialDirLightPositionY;
         }
 
-        // Function to handle keyup event
-        function onKeyUp(event) {
-            switch (event.keyCode) {
-                case 38: // Up arrow
-                    moveForward = false;
-                    break;
-                case 40: // Down arrow
-                    moveBackward = false;
-                    break;
-                case 37: // Left arrow
-                    moveLeft = false;
-                    break;
-                case 39: // Right arrow
-                    moveRight = false;
-                    break;
+            initaliseValues();
+
+            const renderer = new THREE.WebGLRenderer({
+            alpha: true,
+            antialias: true
+            });
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.setSize( window.innerWidth, window.innerHeight );
+            document.body.appendChild( renderer.domElement );
+
+            function Texture(width, height, rects) {
+                const canvas = document.createElement( "canvas" );
+                canvas.width = width;
+                canvas.height = height;
+                const context = canvas.getContext( "2d" );
+                context.fillStyle = "#ffffff";
+                context.fillRect( 0, 0, width, height );
+                context.fillStyle = "rgba(0,0,0,0.6)";  
+                rects.forEach(rect => {
+                    context.fillRect(rect.x, rect.y, rect.w, rect.h);
+                });
+                return new THREE.CanvasTexture(canvas);
             }
+
+            function Wheel() {
+                const wheel = new THREE.Mesh( 
+                    new THREE.BoxGeometry( 12*zoom, 33*zoom, 12*zoom ), 
+                    new THREE.MeshLambertMaterial( { color: 0x333333, flatShading: true } ) 
+                );
+                wheel.position.z = 6*zoom;
+                return wheel;
+            }
+
+            function Car() {
+                const car = new THREE.Group();
+                const color = vechicleColors[Math.floor(Math.random() * vechicleColors.length)];
+                
+                const main = new THREE.Mesh(
+                    new THREE.BoxGeometry( 60*zoom, 30*zoom, 15*zoom ), 
+                    new THREE.MeshPhongMaterial( { color, flatShading: true } )
+                );
+                main.position.z = 12*zoom;
+                main.castShadow = true;
+                main.receiveShadow = true;
+                car.add(main)
+                
+                const cabin = new THREE.Mesh(
+                    new THREE.BoxGeometry( 33*zoom, 24*zoom, 12*zoom ), 
+                    [
+                    new THREE.MeshPhongMaterial( { color: 0xcccccc, flatShading: true, map: carBackTexture } ),
+                    new THREE.MeshPhongMaterial( { color: 0xcccccc, flatShading: true, map: carFrontTexture } ),
+                    new THREE.MeshPhongMaterial( { color: 0xcccccc, flatShading: true, map: carRightSideTexture } ),
+                    new THREE.MeshPhongMaterial( { color: 0xcccccc, flatShading: true, map: carLeftSideTexture } ),
+                    new THREE.MeshPhongMaterial( { color: 0xcccccc, flatShading: true } ), // top
+                    new THREE.MeshPhongMaterial( { color: 0xcccccc, flatShading: true } ) // bottom
+                    ]
+                );
+                cabin.position.x = 6*zoom;
+                cabin.position.z = 25.5*zoom;
+                cabin.castShadow = true;
+                cabin.receiveShadow = true;
+                car.add( cabin );
+                
+                const frontWheel = new Wheel();
+                frontWheel.position.x = -18*zoom;
+                car.add( frontWheel );
+
+                const backWheel = new Wheel();
+                backWheel.position.x = 18*zoom;
+                car.add( backWheel );
+
+                car.castShadow = true;
+                car.receiveShadow = false;
+                
+                return car;  
+            }
+
+            function Truck() {
+                                // Create car body
+                                const carBodyGeometry = new THREE.BoxGeometry(80, 40, 40);
+                const carBodyMaterial = new THREE.MeshBasicMaterial({ color: 0x808080 });
+                const carBody = new THREE.Mesh(carBodyGeometry, carBodyMaterial);
+
+                // Create truck cabin
+                const cabinGeometry = new THREE.BoxGeometry(35, 30, 40); // Customize dimensions as needed
+                const cabinMaterial = new THREE.MeshBasicMaterial({ color: 0x8b0000 });
+                const cabin = new THREE.Mesh(cabinGeometry, cabinMaterial);
+                cabin.position.set(62, 5, 0); // Position the cabin in front of the car body
+                carBody.add(cabin);
+                const cabinGeometry2 = new THREE.BoxGeometry(40, 40, 10); // Customize dimensions as needed
+                const cabinMaterial2 = new THREE.MeshBasicMaterial({ color: 0x000000 });
+                const cabin2 = new THREE.Mesh(cabinGeometry2, cabinMaterial2);
+                cabin2.position.set(60, -15, 0); // Position the cabin in front of the car body
+                cabin2.rotation.x = Math.PI / 2;
+                carBody.add(cabin2);
+
+                // Create wheels
+                const wheelRadius = 8;
+                const wheelHeight = 6;
+                const wheelGeometry = new THREE.CylinderGeometry(wheelRadius, wheelRadius, wheelHeight, 32);
+                const wheelMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+                const frontLeftWheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
+                const frontRightWheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
+                const rearLeftWheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
+                const rearRightWheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
+
+                const cabinWheelsRightBack = new THREE.Mesh(wheelGeometry, wheelMaterial);
+                const cabinWheelsLeftBack = new THREE.Mesh(wheelGeometry, wheelMaterial);
+
+                const cabinWheelsRightFront = new THREE.Mesh(wheelGeometry, wheelMaterial);
+                const cabinWheelsLeftFront = new THREE.Mesh(wheelGeometry, wheelMaterial);
+                
+
+                // 2 pairs of wheels i the front of the truck
+                cabinWheelsRightBack.position.set(20, -20, 15);
+                cabinWheelsLeftBack.position.set(20, -20, -15);
+
+                cabinWheelsRightFront.position.set(50, -20, 15);
+                cabinWheelsLeftFront.position.set(50, -20, -15);
+
+
+                // 2 pairs of wheels in the back of the truck
+                frontLeftWheel.position.set(-30, -20, 15);
+                frontRightWheel.position.set(-16, -20, 15);
+                rearLeftWheel.position.set(-30, -20, -15);
+                rearRightWheel.position.set(-16, -20, -15);
+
+                frontLeftWheel.rotation.x = Math.PI / 2;
+                frontRightWheel.rotation.x = Math.PI / 2;
+                rearLeftWheel.rotation.x = Math.PI / 2;
+                rearRightWheel.rotation.x = Math.PI / 2;
+
+                cabinWheelsRightBack.rotation.x = Math.PI / 2;
+                cabinWheelsLeftBack.rotation.x = Math.PI / 2;
+
+                cabinWheelsRightFront.rotation.x = Math.PI / 2;
+                cabinWheelsLeftFront.rotation.x = Math.PI / 2;
+
+                carBody.add(frontLeftWheel);
+                carBody.add(frontRightWheel);
+                carBody.add(rearLeftWheel);
+                carBody.add(rearRightWheel);
+                carBody.add(cabinWheelsRightBack);
+                carBody.add(cabinWheelsLeftBack);
+                carBody.add(cabinWheelsRightFront);
+                carBody.add(cabinWheelsLeftFront);
+
+
+                //front lights
+                const lightGeometry = new THREE.SphereGeometry(3, 32, 32);
+                const lightMaterial = new THREE.MeshBasicMaterial({ color: 0xfffffff });
+                const leftLight = new THREE.Mesh(lightGeometry, lightMaterial);
+                const rightLight = new THREE.Mesh(lightGeometry, lightMaterial);
+                leftLight.position.set(80, -15, 12);
+                rightLight.position.set(80, -15, -12);
+                carBody.add(leftLight);
+                carBody.add(rightLight);
+
+                // front window
+                const windowGeometry = new THREE.BoxGeometry(30, 15, 2); // Customize dimensions as needed
+                const windowMaterial = new THREE.MeshBasicMaterial({ color: 0xadd8e6, transparent: true, opacity: 0.5 });
+                const frontWindow = new THREE.Mesh(windowGeometry, windowMaterial);
+                frontWindow.position.set(80, 7, 0); // Position the window on the front of the cabin
+                frontWindow.rotation.y = Math.PI / 2;
+                carBody.add(frontWindow);
+
+                // Create door right
+                const doorRightGeometry = new THREE.BoxGeometry(1, 20, 10); // Customize dimensions as needed
+                const doorRightMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+                const doorRight = new THREE.Mesh(doorRightGeometry, doorRightMaterial);
+                doorRight.position.set(65, 5, 20); // Position the door on the side of the cabin
+                doorRight.rotation.y = Math.PI / 2;
+                carBody.add(doorRight);
+
+                const doorLeftGeometry = new THREE.BoxGeometry(1, 20, 10); // Customize dimensions as needed
+                const doorLeftMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+                const doorLeft = new THREE.Mesh(doorRightGeometry, doorRightMaterial);
+                doorLeft.position.set(65, 5, -20); // Position the door on the side of the cabin
+                doorLeft.rotation.y = Math.PI / 2;
+                carBody.add(doorLeft);
+
+                // create windshield
+                const wiperArmGeometry1 = new THREE.BoxGeometry(1, 0.5, 10); // Customize dimensions as needed
+                const wiperArmMaterial1 = new THREE.MeshBasicMaterial({ color: 0x000000 });
+                const wiperArm1 = new THREE.Mesh(wiperArmGeometry1, wiperArmMaterial1);
+                wiperArm1.position.set(80, 0, 7); // Position the wiper arm on the windshield
+                carBody.add(wiperArm1);
+
+                const wiperArmGeometry2 = new THREE.BoxGeometry(1, 0.5, 10); // Customize dimensions as needed
+                const wiperArmMaterial2 = new THREE.MeshBasicMaterial({ color: 0x000000 });
+                const wiperArm2 = new THREE.Mesh(wiperArmGeometry2, wiperArmMaterial2);
+                wiperArm2.position.set(80, 0, -4); // Position the wiper arm on the windshield
+                carBody.add(wiperArm2);
+
+                // Create windshield wiper blade
+                const wiperBladeGeometry1 = new THREE.BoxGeometry(1, 10, 0.5); // Customize dimensions as needed
+                const wiperBladeMaterial1 = new THREE.MeshBasicMaterial({ color: 0x000000 });
+                const wiperBlade1 = new THREE.Mesh(wiperBladeGeometry1, wiperBladeMaterial1);
+                wiperBlade1.position.set(80,4, 5); // Position the wiper blade on the windshield
+                wiperBlade1.rotation.x = Math.PI / -4;
+
+                carBody.add(wiperBlade1);
+
+
+                const wiperBladeGeometry2 = new THREE.BoxGeometry(1, 10, 0.5); // Customize dimensions as needed
+                const wiperBladeMaterial2 = new THREE.MeshBasicMaterial({ color: 0x000000 });
+                const wiperBlade2 = new THREE.Mesh(wiperBladeGeometry2, wiperBladeMaterial2);
+                wiperBlade2.position.set(80,4, -6); // Position the wiper blade on the windshield
+                wiperBlade2.rotation.x = Math.PI / -4;
+
+                carBody.add(wiperBlade2);
+                carBody.position.y = -10;
+                carBody.position.z = 50;
+                carBody.rotation.x = Math.PI/2;
+                return carBody;
+            }
+
+            function Three() {
+                // Materials
+                const trunkMaterial = new THREE.MeshStandardMaterial({ color: 0xb5651d }); // Brown color for the trunk
+                const branchMaterial = new THREE.MeshStandardMaterial({ color: 0xb5651d }); // Brown color for the branches
+                const foliageMaterial = new THREE.MeshStandardMaterial({ color: 0x00aa00 }); // Green color for the foliage (cone)
+
+                // Trunk
+                const trunkRadius = 7;
+                const trunkHeight = 35;
+                const trunkGeometry = new THREE.CylinderGeometry(trunkRadius, trunkRadius, trunkHeight, 32);
+                const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
+                trunk.position.y = trunkHeight;
+                trunk.castShadow = true;
+                trunk.receiveShadow = true;
+
+                // Branch
+                const branchLength = 10;
+                const branchRadius = 1;
+                const branchGeometry = new THREE.CylinderGeometry(branchRadius, branchRadius, branchLength, 32);
+                const branch1 = new THREE.Mesh(branchGeometry, branchMaterial);
+                branch1.position.set(0, trunkHeight - branchLength / 2, 0);
+                branch1.castShadow = true;
+                branch1.receiveShadow = true;
+                trunk.add(branch1);
+
+                // cone branches
+                // Set branch inclination
+                const inclinationAngle = Math.PI / 8; 
+                branch1.rotation.z = inclinationAngle;
+                branch1.position.y = 60
+                branch1.position.x = 0
+                branch1.position.z = 6
+
+                const branch2 = new THREE.Mesh(branchGeometry, branchMaterial);
+                branch2.position.set(0, trunkHeight - branchLength / 2, 0);
+                branch2.castShadow = true;
+                branch2.receiveShadow = true;
+                trunk.add(branch2);
+
+                // Set branch inclination
+                const inclinationAngle2 = Math.PI / 4; 
+                branch2.rotation.z = inclinationAngle2;
+                branch2.position.y =55
+                branch2.position.x =-15
+                branch2.position.z =14
+
+                const branch3 = new THREE.Mesh(branchGeometry, branchMaterial);
+                branch3.position.set(0, trunkHeight - branchLength / 2, 0);
+                branch3.castShadow = true;
+                branch3.receiveShadow = true;
+                trunk.add(branch3);
+
+                // Set branch inclination
+                const inclinationAngle3 = Math.PI/1.5;
+                branch3.rotation.z = inclinationAngle3;
+                branch3.position.y = 55
+                branch3.position.x = 15
+                branch3.position.z = 10
+
+                //trunk branches
+                const branch4 = new THREE.Mesh(branchGeometry, branchMaterial);
+                branch4.position.set(0, trunkHeight - branchLength / 2, 0);
+                branch4.castShadow = true;
+                branch4.receiveShadow = true;
+                trunk.add(branch4);
+
+                // Set branch inclination
+                const inclinationAngle4 = Math.PI/2; 
+                branch4.rotation.z = inclinationAngle4;
+                branch4.position.y = 80
+                branch4.position.x = 5
+                branch4.position.z =5
+
+                // Foliage (Cone)
+                const coneRadius = 30;
+                const coneHeight = 60;
+                const coneGeometry = new THREE.ConeGeometry(coneRadius, coneHeight, 32);
+                const cone = new THREE.Mesh(coneGeometry, foliageMaterial);
+                cone.position.y = 65;
+                cone.castShadow = true;
+                cone.receiveShadow = true;
+                trunk.add(cone);
+                trunk.rotation.x = Math.PI/2;
+                trunk.position.y = -10;
+                return trunk;
+
+            }
+
+            function Chicken() {
+
+                const legSize = 3;
+                const legHeight = 20;
+                const legDistance = 30;
+                const chicken = new THREE.Group();
+
+                const body = new THREE.Mesh(
+                    new THREE.BoxGeometry( chickenSize*zoom, chickenSize*zoom, 20*zoom ), 
+                    new THREE.MeshPhongMaterial( { color: 0xffffff, flatShading: true } )
+                );
+                body.position.z = 25*zoom;
+                body.castShadow = true;
+                body.receiveShadow = true;
+                chicken.add(body);
+
+                //lowerPart
+                const lowerPartSize = { width: chickenSize * zoom*0.3 , height: chickenSize * zoom*0.3 , depth: chickenSize * zoom*1.2};
+                const lowerPartMaterial = new THREE.MeshPhongMaterial({ color: 0xffdaed});
+
+                const lowerPart = new THREE.Mesh(
+                    new THREE.BoxGeometry(lowerPartSize.width, lowerPartSize.height, lowerPartSize.depth),
+                    lowerPartMaterial
+                );
+                lowerPart.rotation.x = Math.PI / 2;
+                lowerPart.position.y = -5;
+                lowerPart.position.x = 0;
+                lowerPart.position.z = 40;
+                // Add the lower part to the chicken group
+                chicken.add(lowerPart);
+
+
+                const rowel = new THREE.Mesh(
+                    new THREE.BoxGeometry( 2*zoom, 4*zoom, 2*zoom ), 
+                    new THREE.MeshLambertMaterial( { color: 0xF0619A, flatShading: true } )
+                );
+                rowel.position.z = 35*zoom;
+                rowel.castShadow = true;
+                rowel.receiveShadow = false;
+                chicken.add(rowel);
+
+                const legMaterial = new THREE.MeshPhongMaterial({ color: 0x8B4513 });
+
+                const leg1 = new THREE.Mesh(
+                    new THREE.CylinderGeometry(legSize, legSize, legHeight, 32),
+                    legMaterial
+                );
+                leg1.rotation.x = Math.PI / 2;
+                leg1.position.x = 10;
+                leg1.position.y = 10;
+                leg1.position.z = 15;
+
+                leg1.castShadow = true;
+                leg1.receiveShadow = true;
+                chicken.add(leg1);
+
+                const leg2 = leg1.clone();
+                leg2.position.x=-5;
+                leg2.position.y=10;
+                leg2.rotation.x = Math.PI / 2;
+                chicken.add(leg2);
+
+                const footSize = 5;
+                const footHeight = 10;
+                const foot1 = new THREE.Mesh(
+                    new THREE.BoxGeometry(footSize, footHeight, footSize),
+                    legMaterial
+                );
+                foot1.position.y= 15;
+                foot1.position.x= 11;
+                foot1.position.z= 10;
+
+                foot1.castShadow = true;
+                foot1.receiveShadow = true;
+                chicken.add(foot1);
+
+                const foot2 = foot1.clone();
+                foot2.position.y=15;
+                foot2.position.x=-5;
+                foot2.position.z=10;
+                chicken.add(foot2);
+
+                // add wings
+                const wingSize = { width: 5 * zoom, height: 7 * zoom, depth: 2 * zoom };
+                const wingMaterial = new THREE.MeshPhongMaterial({ color: 0xcccccccc, flatShading: true });
+
+                const wing1 = new THREE.Mesh(
+                    new THREE.BoxGeometry(wingSize.width, wingSize.height, wingSize.depth),
+                    wingMaterial
+                );
+                wing1.rotation.y = Math.PI / 3; // Rotate by 90 degrees around the x-axis
+                // Position the wing relative to the body of the chicken
+                wing1.position.x= 15;
+                wing1.position.y= 0;
+                wing1.position.z= 50; 
+                
+                chicken.add(wing1);
+
+                const mixer = new THREE.AnimationMixer(wing1);
+
+
+                // Define keyframes for the wing animation
+                const keyframes = [
+                    { time: 0, value: 0 }, // Initial position
+                    { time: 0.25, value: Math.PI / 6 }, // Flap up
+                    { time: 0.25, value: 0 } // Return to initial position
+                ];
+
+                const track = new THREE.NumberKeyframeTrack('.rotation[x]', keyframes.map(kf => kf.time), keyframes.map(kf => kf.value));
+                const clip = new THREE.AnimationClip('flap', -1, [track]);
+
+                // Create an animation action
+                const action = mixer.clipAction(clip);
+                action.loop = THREE.LoopPingPong; // Make the animation loop back and forth
+
+                // Start the animation
+                action.play();
+                function animateWings() {
+                    requestAnimationFrame(animateWings);
+                    mixer.update(0.01); // Update the animation mixer
+                }
+                // Call the animate function
+                animateWings(); 
+
+                return chicken;
+            }
+
+            function Road() {
+                const road = new THREE.Group();
+                const whiteStripWidth = 0.2; // Adjust the width of the white strips as needed
+                const whiteStripColor = 0xffffff; // White color
+
+                const createSection = (color, positionX = 0) => {
+                    const section = new THREE.Group();
+
+                    const roadSection = new THREE.Mesh(
+                        new THREE.PlaneGeometry(boardWidth * zoom, positionWidth * zoom),
+                        new THREE.MeshPhongMaterial({ color })
+                    );
+                    roadSection.receiveShadow = true;
+                    section.add(roadSection);
+
+                    const leftStrip = new THREE.Mesh(
+                        new THREE.PlaneGeometry(whiteStripWidth, positionWidth * zoom),
+                        new THREE.MeshPhongMaterial({ color: whiteStripColor })
+                    );
+                    leftStrip.position.x = -boardWidth * zoom / 2 - whiteStripWidth / 2;
+                    section.add(leftStrip);
+
+                    const rightStrip = new THREE.Mesh(
+                        new THREE.PlaneGeometry(whiteStripWidth, positionWidth * zoom),
+                        new THREE.MeshPhongMaterial({ color: whiteStripColor })
+                    );
+                    rightStrip.position.x = boardWidth * zoom / 2 + whiteStripWidth / 2;
+                    section.add(rightStrip);
+
+                    section.position.x = positionX;
+                    return section;
+                };
+
+                const middle = createSection(0x454A59);
+                road.add(middle);
+
+                const left = createSection(0x393D49, -boardWidth * zoom);
+                road.add(left);
+
+                const right = createSection(0x393D49, boardWidth * zoom);
+                road.add(right);
+
+                return road;
+            }
+
+
+            function Grass() {
+                const grass = new THREE.Group();
+
+                const createSection = color => new THREE.Mesh(
+                    new THREE.BoxGeometry( boardWidth*zoom, positionWidth*zoom, 3*zoom ), 
+                    new THREE.MeshPhongMaterial( { color } )
+                );
+
+                const middle = createSection(0xbaf455);
+                middle.receiveShadow = true;
+                grass.add(middle);
+
+                const left = createSection(0x99C846);
+                left.position.x = - boardWidth*zoom;
+                grass.add(left);
+
+                const right = createSection(0x99C846);
+                right.position.x = boardWidth*zoom;
+                grass.add(right);
+
+                grass.position.z = 1.5*zoom;
+                return grass;
+            }
+
+            function Lane(index) {
+            this.index = index;
+            this.type = index <= 0 ? 'field' : laneTypes[Math.floor(Math.random()*laneTypes.length)];
+
+            switch(this.type) {
+                case 'field': {
+                this.type = 'field';
+                this.mesh = new Grass();
+                break;
+                }
+                case 'forest': {
+                    this.mesh = new Grass();
+
+                    this.occupiedPositions = new Set();
+                    this.threes = [1,2,3,4].map(() => {
+                        const three = new Three();
+                        let position;
+                        do {
+                            position = Math.floor(Math.random()*columns);
+                        }while(this.occupiedPositions.has(position))
+                            this.occupiedPositions.add(position);
+                            three.position.x = (position*positionWidth+positionWidth/2)*zoom-boardWidth*zoom/2;
+                            this.mesh.add( three );
+                        return three;
+                    })
+                    break;
+                }
+                case 'car' : {
+                    this.mesh = new Road();
+                    this.direction = Math.random() >= 0.5;
+
+                    const occupiedPositions = new Set();
+                    this.vechicles = [1,2,3].map(() => {
+                        const vechicle = new Car();
+                        let position;
+                        do {
+                        position = Math.floor(Math.random()*columns/2);
+                        }while(occupiedPositions.has(position))
+                        occupiedPositions.add(position);
+                        vechicle.position.x = (position*positionWidth*2+positionWidth/2)*zoom-boardWidth*zoom/2;
+                        if(!this.direction) vechicle.rotation.z = Math.PI;
+                        this.mesh.add( vechicle );
+                        return vechicle;
+                    })
+
+                    this.speed = laneSpeeds[Math.floor(Math.random()*laneSpeeds.length)];
+                    break;
+                }
+                case 'truck' : {
+                    this.mesh = new Road();
+                    this.direction = Math.random() >= 0.5;
+
+                    const occupiedPositions = new Set();
+                    this.vechicles = [1,2].map(() => {
+                        const vechicle = new Truck();
+                        let position;
+                        do {
+                        position = Math.floor(Math.random()*columns/3);
+                        }while(occupiedPositions.has(position))
+                        occupiedPositions.add(position);
+                        vechicle.position.x = (position*positionWidth*3+positionWidth/2)*zoom-boardWidth*zoom/2;
+                        if(!this.direction) vechicle.rotation.z = Math.PI;
+                        
+                        this.mesh.add( vechicle );
+                        return vechicle;
+                    })
+                    this.direction = Math.random() >= 0.5; // Set direction randomly
+
+                    this.speed = laneSpeeds[Math.floor(Math.random()*laneSpeeds.length)];
+                    break;
+                    }
+                }
+            }
+
+            /* document.querySelector("#retry").addEventListener("click", () => {
+                lanes.forEach(lane => scene.remove( lane.mesh ));
+                initaliseValues();
+                endDOM.style.visibility = 'hidden';
+            }); */
+
+            document.getElementById('forward').addEventListener("click", () => move('forward'));
+
+            document.getElementById('backward').addEventListener("click", () => move('backward'));
+
+            document.getElementById('left').addEventListener("click", () => move('left'));
+
+            document.getElementById('right').addEventListener("click", () => move('right'));
+
+            window.addEventListener("keydown", event => {
+            if (event.keyCode == '38') {
+                // up arrow
+                move('forward');
+            }
+            else if (event.keyCode == '40') {
+                // down arrow
+                move('backward');
+            }
+            else if (event.keyCode == '37') {
+                // left arrow
+                move('left');
+            }
+            else if (event.keyCode == '39') {
+                // right arrow
+                move('right');
+            }
+            });
+
+            function move(direction) {
+            const finalPositions = moves.reduce((position,move) => {
+                if(move === 'forward') return {lane: position.lane+1, column: position.column};
+                if(move === 'backward') return {lane: position.lane-1, column: position.column};
+                if(move === 'left') return {lane: position.lane, column: position.column-1};
+                if(move === 'right') return {lane: position.lane, column: position.column+1};
+            }, {lane: currentLane, column: currentColumn})
+
+            if (direction === 'forward') {
+                if(lanes[finalPositions.lane+1].type === 'forest' && lanes[finalPositions.lane+1].occupiedPositions.has(finalPositions.column)) return;
+                if(!stepStartTimestamp) startMoving = true;
+                addLane();
+            }
+            else if (direction === 'backward') {
+                if(finalPositions.lane === 0) return;
+                if(lanes[finalPositions.lane-1].type === 'forest' && lanes[finalPositions.lane-1].occupiedPositions.has(finalPositions.column)) return;
+                if(!stepStartTimestamp) startMoving = true;
+            }
+            else if (direction === 'left') {
+                if(finalPositions.column === 0) return;
+                if(lanes[finalPositions.lane].type === 'forest' && lanes[finalPositions.lane].occupiedPositions.has(finalPositions.column-1)) return;
+                if(!stepStartTimestamp) startMoving = true;
+            }
+            else if (direction === 'right') {
+                if(finalPositions.column === columns - 1 ) return;
+                if(lanes[finalPositions.lane].type === 'forest' && lanes[finalPositions.lane].occupiedPositions.has(finalPositions.column+1)) return;
+                if(!stepStartTimestamp) startMoving = true;
+            }
+            moves.push(direction);
+            }
+
+            function animate(timestamp) {
+            requestAnimationFrame( animate );
+
+            if(!previousTimestamp) previousTimestamp = timestamp;
+            const delta = timestamp - previousTimestamp;
+            previousTimestamp = timestamp;
+
+            // Animate cars and trucks moving on the lane
+            lanes.forEach(lane => {
+                if(lane.type === 'car' || lane.type === 'truck') {
+                const aBitBeforeTheBeginingOfLane = -boardWidth*zoom/2 - positionWidth*2*zoom;
+                const aBitAfterTheEndOFLane = boardWidth*zoom/2 + positionWidth*2*zoom;
+                lane.vechicles.forEach(vechicle => {
+                    if(lane.direction) {
+                    vechicle.position.x = vechicle.position.x < aBitBeforeTheBeginingOfLane ? aBitAfterTheEndOFLane : vechicle.position.x -= lane.speed/16*delta;
+                    }else{
+                    vechicle.position.x = vechicle.position.x > aBitAfterTheEndOFLane ? aBitBeforeTheBeginingOfLane : vechicle.position.x += lane.speed/16*delta;
+                    }
+                });
+                }
+            });
+
+            if(startMoving) {
+                stepStartTimestamp = timestamp;
+                startMoving = false;
+            }
+
+            if(stepStartTimestamp) {
+                const moveDeltaTime = timestamp - stepStartTimestamp;
+                const moveDeltaDistance = Math.min(moveDeltaTime/stepTime,1)*positionWidth*zoom;
+                const jumpDeltaDistance = Math.sin(Math.min(moveDeltaTime/stepTime,1)*Math.PI)*8*zoom;
+                switch(moves[0]) {
+                case 'forward': {
+                    const positionY = currentLane*positionWidth*zoom + moveDeltaDistance;
+                    camera.position.y = initialCameraPositionY + positionY; 
+                    dirLight.position.y = initialDirLightPositionY + positionY; 
+                    chicken.position.y = positionY; // initial chicken position is 0
+
+                    chicken.position.z = jumpDeltaDistance;
+                    break;
+                }
+                case 'backward': {
+                    const positionY = currentLane*positionWidth*zoom - moveDeltaDistance
+                    camera.position.y = initialCameraPositionY + positionY;
+                    dirLight.position.y = initialDirLightPositionY + positionY; 
+                    chicken.position.y = positionY;
+
+                    chicken.position.z = jumpDeltaDistance;
+                    break;
+                }
+                case 'left': {
+                    const positionX = (currentColumn*positionWidth+positionWidth/2)*zoom -boardWidth*zoom/2 - moveDeltaDistance;
+                    camera.position.x = initialCameraPositionX + positionX;     
+                    dirLight.position.x = initialDirLightPositionX + positionX; 
+                    chicken.position.x = positionX; // initial chicken position is 0
+                    chicken.position.z = jumpDeltaDistance;
+                    break;
+                }
+                case 'right': {
+                    const positionX = (currentColumn*positionWidth+positionWidth/2)*zoom -boardWidth*zoom/2 + moveDeltaDistance;
+                    camera.position.x = initialCameraPositionX + positionX;       
+                    dirLight.position.x = initialDirLightPositionX + positionX;
+                    chicken.position.x = positionX; 
+
+                    chicken.position.z = jumpDeltaDistance;
+                    break;
+                }
+                }
+                // Once a step has ended
+                if(moveDeltaTime > stepTime) {
+                switch(moves[0]) {
+                    case 'forward': {
+                    currentLane++;
+                    counterDOM.innerHTML = currentLane;    
+                    break;
+                    }
+                    case 'backward': {
+                    currentLane--;
+                    counterDOM.innerHTML = currentLane;    
+                    break;
+                    }
+                    case 'left': {
+                    currentColumn--;
+                    break;
+                    }
+                    case 'right': {
+                    currentColumn++;
+                    break;
+                    }
+                }
+                moves.shift();
+                // If more steps are to be taken then restart counter otherwise stop stepping
+                stepStartTimestamp = moves.length === 0 ? null : timestamp;
+                }
+            }
+
+            // Hit test
+            if(lanes[currentLane].type === 'car' || lanes[currentLane].type === 'truck') {
+                const chickenMinX = chicken.position.x - chickenSize*zoom/2;
+                const chickenMaxX = chicken.position.x + chickenSize*zoom/2;
+                const vechicleLength = { car: 60, truck: 105}[lanes[currentLane].type]; 
+                lanes[currentLane].vechicles.forEach(vechicle => {
+                const carMinX = vechicle.position.x - vechicleLength*zoom/2;
+                const carMaxX = vechicle.position.x + vechicleLength*zoom/2;
+                if(chickenMaxX > carMinX && chickenMinX < carMaxX) {
+                    endDOM.style.visibility = 'visible';
+                }
+                });
+
+            }
+            renderer.render( scene, camera );	
+            }
+
+            requestAnimationFrame( animate );
         }
-
-        // Function to update chicken's position based on movement direction
-        function updateChickenPosition() {
-            if (moveForward) {
-                chicken.position.z -= movementSpeed;
-            }
-            if (moveBackward) {
-                chicken.position.z += movementSpeed;
-            }
-            if (moveLeft) {
-                chicken.position.x -= movementSpeed;
-            }
-            if (moveRight) {
-                chicken.position.x += movementSpeed;
-            }
-        }
-
-        // Inside your renderScene function, call updateChickenPosition before rendering the scene
-        function renderScene() {
-            updateChickenPosition();
-            // Other rendering code...
-        }
-
-
 		window.onload = init
 
 	</script>
+
+    <div id="counter">0</div>
+        
+    <div id="controlls">
+    <div>
+        <button id="forward">
+        <svg width="30" height="30" viewBox="0 0 10 10">
+            <g transform="rotate(0, 5,5)">
+            <path d="M5,4 L7,6 L3,6 L5,4" />
+            </g>
+        </svg>
+        </button>
+        <button id="left">
+        <svg width="30" height="30" viewBox="0 0 10 10">
+            <g transform="rotate(-90, 5,5)">
+            <path d="M5,4 L7,6 L3,6 L5,4" />
+            </g>
+        </svg>
+        </button>
+        <button id="backward">
+        <svg width="30" height="30" viewBox="0 0 10 10">
+            <g transform="rotate(180, 5,5)">
+            <path d="M5,4 L7,6 L3,6 L5,4" />
+            </g>
+        </svg>
+        </button>
+        <button id="right">
+        <svg width="30" height="30" viewBox="0 0 10 10">
+            <g transform="rotate(90, 5,5)">
+            <path d="M5,4 L7,6 L3,6 L5,4" />
+            </g>
+        </svg>
+        </button>
+    </div>
+    </div>
+
+    <div id="end">
+    <button id="retry">Retry</button>
+    </div>
 
 </body>
 
